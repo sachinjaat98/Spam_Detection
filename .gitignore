@@ -208,3 +208,5 @@ __marimo__/
 
 Untitled.ipynb
 models/model_bert.pth
+models/
+.vscode/launch.json
