@@ -207,4 +207,4 @@ marimo/_lsp/
 __marimo__/
 
 Untitled.ipynb
-models/
+models/model_bert.pth
