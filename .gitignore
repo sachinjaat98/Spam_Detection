@@ -1,4 +1,14 @@
 # Byte-compiled / optimized / DLL files
+
+
+
+models
+data
+evaluation_results
+Untitled.ipynb
+
+
+
 __pycache__/
 *.py[codz]
 *$py.class
@@ -206,7 +216,3 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
-Untitled.ipynb
-/models/model_bert.pth
-/models/
-.vscode/launch.json
