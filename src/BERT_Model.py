@@ -10,6 +10,7 @@ import yaml
 from transformers import BertTokenizer, BertModel
 
 
+
 # Ensure the "logs" directory exists
 log_dir = 'logs'
 os.makedirs(log_dir, exist_ok=True)
@@ -91,11 +92,12 @@ class SpamClassifier(nn.Module):
 def train_model(X_train: np.ndarray, y_train: np.ndarray, attention_masks: np.ndarray, params: dict):
     try:
         # Set device
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        device = torch.device(params.get('device', 'cuda' if torch.cuda.is_available() else 'cpu'))
+        logger.debug('Using device: %s', device)
+
         
         # Model parameters
-        batch_size = 32
-        num_epochs = 10
+        batch_size = params.get('batch_size', 32)
         learning_rate = 2e-5
         
         # Convert data to PyTorch tensors
@@ -124,7 +126,7 @@ def train_model(X_train: np.ndarray, y_train: np.ndarray, attention_masks: np.nd
         model.to(device)
         optimizer = optim.Adam(model.parameters(), lr=2e-5)
         loss_fn = nn.BCELoss()
-        epochs = 5
+        epochs = 8
 
         #training loop
         print('Starting training...')
@@ -144,8 +146,10 @@ def train_model(X_train: np.ndarray, y_train: np.ndarray, attention_masks: np.nd
                 optimizer.step()
             
             avg_train_loss = total_loss / len(train_dataloader)
+
             print(f'Epoch {epoch + 1}, Loss: {avg_train_loss}')
-            logger.debug('Epoch [%d/%d], Average Loss: %.4f', epoch + 1, num_epochs, avg_train_loss)
+            logger.debug('Epoch [%d/%d], Average Loss: %.4f', epoch + 1, epochs, avg_train_loss)
+
         
         return model
         

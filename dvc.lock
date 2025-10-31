@@ -65,26 +65,26 @@ stages:
       nfiles: 4
     - path: src/BERT_Model.py
       hash: md5
-      md5: ecd3a4fb8a427ac92cd83a7ad0f76b1f
-      size: 5994
+      md5: aa123d87524780952f2965e1629ad4e4
+      size: 6071
     outs:
     - path: models/model_bert.pth
       hash: md5
-      md5: 7937350a3169cff96d8bca578faf8cc7
+      md5: d443d8879647d0788614e9df4c608e56
       size: 438014279
   model_evaluation:
     cmd: python src/model_eval.py
     deps:
     - path: models/model_bert.pth
       hash: md5
-      md5: 7937350a3169cff96d8bca578faf8cc7
+      md5: d443d8879647d0788614e9df4c608e56
       size: 438014279
     - path: src/model_eval.py
       hash: md5
-      md5: aef3596584e3d36036bbb47756d1997a
-      size: 7503
+      md5: b357c2f6a7af2330321dac08c9bf0fa2
+      size: 7924
     outs:
     - path: evaluation_results/eval_results.json
       hash: md5
-      md5: e97b57a8e43d152ddc3f9ab806abc577
+      md5: 96c95ac7607ebe3f63abc8f1808ab5c6
       size: 344

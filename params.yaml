@@ -6,8 +6,11 @@ feature_engineering:
 
 hidden_size: 64
 
+
+    
 model_building:
   random_state: 2
+  device: 'cuda'
 
   batch_size: 32
   epochs: 5

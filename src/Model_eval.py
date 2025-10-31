@@ -11,6 +11,7 @@ import yaml
 from torch import nn
 from transformers import BertTokenizer, BertModel
 # /C:/Users/sachi/OneDrive/Desktop/LLM/Spam_Detection/src/Model_eval.py
+from dvclive import Live
 
 
 # -------------------------
@@ -142,15 +143,22 @@ class CustomBERT(nn.Module):
 
 def main():
  
+    #load parameters
+    params_path = "params.yaml"
+    params = load_params(params_path)
+
+    device = torch.device(params['model_building'].get('device', 'cuda' if torch.cuda.is_available() else 'cpu'))
+    logger.info("Parameters loaded.")
+    
+
     # loading saved bert model .pth file
     logger.info("Loading tokenizer and model...")
     model_dir = "models/model_bert.pth"
-
-    #tokenizer = BertTokenizer.from_pretrained(model_dir)
     model = CustomBERT(num_labels=1)
     model.load_state_dict(torch.load(model_dir))
-    model.to('cuda')
+    model.to(device=device)
     logger.info("Tokenizer and model loaded.")
+
 
     # load test data
     logger.info("Loading test dataset...")
@@ -158,11 +166,11 @@ def main():
 
     #data/processed/ contains test_processed.csv which contains input_ids and target column
     #there is also test_masks.pt file in the same folder
-
     test_data = pd.read_csv(data_path)
     test_masks = torch.load("data/processed/test_masks.pt")
     texts = test_data.iloc[:, :-1].values
     labels = test_data['target'].values
+
 
     # prepare dataloader
     input_ids = torch.tensor(texts, dtype=torch.long)
@@ -171,15 +179,12 @@ def main():
     test_dataset = TensorDataset(input_ids, attention_masks, labels_tensor)
     test_loader = DataLoader(test_dataset, batch_size=32)
 
-    # set device
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    
 
 
     #testing the model
     logger.info("Evaluating the model...")
-    batch_size = 32
-    #example_evaluation(model, test_loader, device)
-
+    batch_size = params['model_building'].get('batch_size', 32)
 
 
     # evaluate
@@ -190,8 +195,6 @@ def main():
     # compute metrics
     acc = accuracy_score(trues, preds)
     precision, recall, f1, _ = precision_recall_fscore_support(trues, preds, average="weighted", zero_division=0)
-
-    # detailed classification report
     cm = confusion_matrix(trues, preds)
     class_report = classification_report(trues, preds, zero_division=0)
 
@@ -204,11 +207,21 @@ def main():
         "confusion_matrix": cm.tolist(),
     }
 
+    #Experimenting with dvclive logging
+    # Initialize dvclive
+    with Live("dvclive_logs",save_dvc_exp=True) as live:
+        live.log_metric("accuracy", acc)
+        live.log_metric("precision_weighted", precision)
+        live.log_metric("recall_weighted", recall)
+        live.log_metric("f1_weighted", f1)
+
+
     logger.info(f"Accuracy: {acc:.4f}")
     logger.info(f"Precision (weighted): {precision:.4f}")
     logger.info(f"Recall (weighted): {recall:.4f}")
     logger.info(f"F1 (weighted): {f1:.4f}")
     logger.info("Classification report:\n" + class_report)
+
 
     # save results
     output_dir = "evaluation_results"
