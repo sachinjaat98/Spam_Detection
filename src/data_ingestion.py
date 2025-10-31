@@ -28,6 +28,9 @@ file_handler.setFormatter(formatter)
 logger.addHandler(console_handler)
 logger.addHandler(file_handler)
 
+# -------------------------
+# Data helpers
+
 def load_params(params_path: str) -> dict:
     """Load parameters from a YAML file."""
     try:
@@ -45,6 +48,8 @@ def load_params(params_path: str) -> dict:
         logger.error('Unexpected error: %s', e)
         raise
 
+# -------------------------
+# Data Ingestion
 def load_data(data_url: str) -> pd.DataFrame:
     """Load data from a CSV file."""
     try:
@@ -83,6 +88,8 @@ def save_data(train_data: pd.DataFrame, test_data: pd.DataFrame, data_path: str)
     except Exception as e:
         logger.error('Unexpected error occurred while saving the data: %s', e)
         raise
+
+
 
 def main():
     try:

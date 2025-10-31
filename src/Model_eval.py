@@ -213,8 +213,7 @@ def main():
     # save results
     output_dir = "evaluation_results"
     os.makedirs(output_dir, exist_ok=True)
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    results_path = os.path.join(output_dir, f"eval_results_{timestamp}.json")
+    results_path = os.path.join(output_dir, f"eval_results.json")
     with open(results_path, "w") as f:
         json.dump(results, f, indent=4)
 

@@ -10,14 +10,16 @@ model_building:
   random_state: 2
 
   batch_size: 32
-  epochs: 3
+  epochs: 5
   learning_rate: 2e-5
   epsilon: 1e-8
   bert_model_name: 'bert-base-uncased'
   freeze_bert: False
+
 model_evaluation:
   metrics: ['accuracy', 'precision', 'recall', 'f1_score']
   threshold: 0.5
+
 model_deployment:
   deployment_path: 'deployed_models/'
   version: 'v1.0.0'
@@ -25,4 +27,3 @@ model_deployment:
   monitor_frequency: 'weekly'
 
 
-model_path: 'models/bert_spam_detector.pt'

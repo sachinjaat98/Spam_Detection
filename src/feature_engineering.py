@@ -32,7 +32,9 @@ logger.addHandler(file_handler)
 
 
 
-
+# -------------------------
+# Data helpers
+# -------------------------
 def load_params(params_path: str) -> dict:
     """Load parameters from a YAML file."""
     try:
@@ -50,6 +52,9 @@ def load_params(params_path: str) -> dict:
         logger.error('Unexpected error: %s', e)
         raise
 
+# -------------------------
+# Data Loading  
+# -------------------------
 def load_data(file_path: str) -> pd.DataFrame:
     """Load data from a CSV file."""
     try:
@@ -88,7 +93,7 @@ def bert_encode(texts, tokenizer, max_len=512):
     return torch.cat(input_ids, dim=0), torch.cat(attention_masks, dim=0)
 
 
-def apply_encode(train_data: pd.DataFrame, test_data: pd.DataFrame, max_features: int) -> tuple:
+def apply_encode(train_data: pd.DataFrame, test_data: pd.DataFrame, max_length: int) -> tuple:
     """Tokenizing data."""
     try:
         tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
@@ -98,11 +103,11 @@ def apply_encode(train_data: pd.DataFrame, test_data: pd.DataFrame, max_features
         X_test = test_data['text'].values
         y_test = test_data['target'].values
 
-        train_inputs, train_masks = bert_encode(X_train, tokenizer, max_len=64)
-        test_inputs, test_masks = bert_encode(X_test, tokenizer, max_len=64)
+        train_inputs, train_masks = bert_encode(X_train, tokenizer, max_len=max_length)
+        test_inputs, test_masks = bert_encode(X_test, tokenizer, max_len=max_length)
 
 
-        logger.debug('BERT encoding applied with max features %d', max_features)
+        logger.debug('BERT encoding applied with max features %d', max_length)
 
 
         #return dataframes
@@ -142,14 +147,14 @@ def save_processed_data(train_df: pd.DataFrame, test_df: pd.DataFrame, train_mas
 def main():
     try:
         params = load_params(params_path='params.yaml')
-        max_features = params['feature_engineering']['max_features']
+        max_length = params['hidden_size']
         # max_features = 50
 
         train_data = load_data('./data/interim/train_processed.csv')
         test_data = load_data('./data/interim/test_processed.csv')
 
         #encoding using BERT
-        train_df, test_df, train_masks, test_masks = apply_encode(train_data, test_data, max_features)
+        train_df, test_df, train_masks, test_masks = apply_encode(train_data, test_data, max_length)
     
         #logging
         logger.debug('Creating DataLoader sampler types: random for train, sequential for test')
