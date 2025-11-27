@@ -3,6 +3,9 @@
 models
 data
 evaluation_results
+dvclive_logs/
+logs/
+.vscode/
 
 
 
